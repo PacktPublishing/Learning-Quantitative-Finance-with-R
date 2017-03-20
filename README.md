@@ -20,19 +20,19 @@ The code will look like the following:
 
 
 ### Software requirements:
-For this book you need a personal computer (can be either Windows machine, Mac, or Linux). To run Apache Spark, you will need Java 7+ and an installed and conﬁgured Python 2.6+ or 3.4+ environment; we use the Anaconda distribution of Python in version 3.5, which can be downloaded from https://www.continuum.io/downloads. 
-
-The Python modules we randomly use throughout the book come preinstalled with Anaconda. We also use GraphFrames and TensorFrames that can be loaded dynamically while starting a Spark instance: to load these you just need an Internet connection. It is ﬁ ne if some of those modules are not currently installed on your machine – we will guide you through the installation process. 
+Download and install R for various platforms such as Windows, Linux, and Mac. Go to the following link: https://cran.rstudio.com/.
+R is an open source platform and can be installed free of charge for any operating system from:
+https://www.r-project.org/. Installation guidelines are also found on this website.
 
 ### Note:
-Chapter 11 and Bouns Chapter 02 does not contain code files.
+Chapter 05, 06 and 09 does not contain dataset files. You can use the code from chapter itself.
 
 ## Related Products:
-* [Python Machine Learning](https://www.packtpub.com/big-data-and-business-intelligence/python-machine-learning?utm_source=github&utm_medium=repository&utm_content=9781783555130)
+* [Mastering R for Quantitative Finance](https://www.packtpub.com/big-data-and-business-intelligence/mastering-r-quantitative-finance?utm_source=github&utm_medium=repository&utm_content=9781783552078)
 
-* [Spark for Python Developers](https://www.packtpub.com/big-data-and-business-intelligence/spark-python-developers?utm_source=github&utm_medium=repository&utm_content=9781784399696)
+* [Introduction to R for Quantitative Finance](https://www.packtpub.com/big-data-and-business-intelligence/introduction-r-quantitative-finance?utm_source=github&utm_medium=repository&utm_content=9781783280933)
 
-* [Python Data Analysis Cookbook](https://www.packtpub.com/big-data-and-business-intelligence/python-data-analysis-cookbook?utm_source=github&utm_medium=repository&utm_content=9781785282287)
+* [Advanced Quantitative Finance with C++](https://www.packtpub.com/application-development/advanced-quantitative-finance-c?utm_source=github&utm_medium=repository&utm_content=9781782167228)
 
 ### Suggestions and Feedback
 [Click here](https://docs.google.com/forms/d/e/1FAIpQLSe5qwunkGf6PUvzPirPDtuy1Du5Rlzew23UBp2S-P3wB-GcwQ/viewform) if you have any feedback or suggestions.
