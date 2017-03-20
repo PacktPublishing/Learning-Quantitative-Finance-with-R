@@ -1,0 +1,193 @@
+#Importing Data
+Sampledata = read.csv("C:/Users/prashant.vats/Desktop/Projects/BOOK R/DataChap2.csv")#not used in code
+# Normal dist- Norm
+y <- dnorm(Sampledata$Return, mean = mean(Sampledata$Return), sd = sd(Sampledata$Return, na.rm = FALSE))
+plot(Sampledata$Return,y)
+# Normal dist- pnorm
+pnorm(.02, mean = mean(Sampledata$Return), sd = sd(Sampledata$Return, na.rm = FALSE))
+# Normal dist- qnorm
+qnorm(0.159837, mean = mean(Sampledata$Return), sd = sd(Sampledata$Return, na.rm = FALSE),lower.tail=FALSE)
+# Normal dist- rnorm
+rnorm(5, mean = mean(Sampledata$Return), sd = sd(Sampledata$Return, na.rm = FALSE))
+# logNormal dist- dlnorm
+y <- dlnorm(Sampledata$Volume, meanlog = mean(Sampledata$Volume), sdlog = sd(Sampledata$Volume, na.rm = FALSE))
+plot(Sampledata$Volume,y)
+# logNormal dist- plnorm
+
+y <- plnorm(Sampledata$Volume, meanlog = mean(Sampledata$Volume), sdlog = sd(Sampledata$Volume, na.r=FALSE))
+plot(Sampledata$Volume,y)
+#Poisson dist
+ppois(15, lambda=10)
+#Uniform dist
+runif(10, min=1, max=5)
+#Extreme value theory
+install.packages("POT")#Not included in book
+library(POT) #Not included in book
+data(ardieres)
+abc<-ardieres[1:10000,]
+events <- clust(abc, u = 1.5, tim.cond = 8/365, clust.max = TRUE)
+par(mfrow = c(2, 2))
+mrlplot(events[, "obs"])
+diplot(events)
+tcplot(events[, "obs"], which = 1)
+tcplot(events[, "obs"], which = 2)
+obs <- events[,"obs"]
+ModelFit <- fitgpd(obs, thresh = 5, "pwmu")
+ModelFit
+# Sampling-Random
+RandomSample <- Sampledata[sample(1:nrow(Sampledata), 10, replace=FALSE),]
+RandomSample
+RandomSample <- Sampledata[sample(1:nrow(Sampledata), 10, replace=TRUE),]
+RandomSample
+
+# Sampling-Strata
+table(Sampledata$Flag,Sampledata$Sentiments)
+library(sampling)
+Stratsubset=strata(Sampledata,c("Flag","Sentiments"),size=c(6,5,4,3), method="srswor")
+Stratsubset
+
+#Section - Statistics (Mean, Median, Mode, Kurtosis, Skewness)    
+# Finding Mean
+mean(Sampledata$Volume)
+# Finding Median
+median(Sampledata$Volume)
+# Finding Mode
+findmode <- function(x) {
+   uniqx <- unique(x)
+   uniqx[which.max(tabulate(match(x, uniqx)))]
+}
+findmode(Sampledata$Return)
+# Finding Summary
+summary(Sampledata$Volume)
+#Finding Moment
+library(e1071)
+#Finding Kurtosis
+kurtosis(Sampledata$Volume)
+#Finding Skewness
+skewness(Sampledata$Volume)
+#Finding Correlation
+library(Hmisc)
+x<-Sampledata[,2:5]
+rcorr(as.matrix(x), type="pearson")
+#Finding autocorrelation plot
+acf(Sampledata$Volume)
+#Finding partial aoto correlation
+pacf(Sampledata$Volume)
+# Finding cross correlation
+ccf(Sampledata$Volume,Sampledata$High, main = "ccf plot")
+#Hypothesis Testing
+#1-Lower Tail Test of Population Mean with Known Variance
+xbar= 9.9          
+mu0 = 10           
+sig = 1.1           
+n = 30                 
+z = (xbar-mu0)/(sig/sqrt(n)) 
+z 
+
+alpha = .05 
+z.alpha = qnorm(1-alpha) 
+-z.alpha
+pnorm(z)
+#2-Upper Tail Test of Population Mean with Known Variance
+xbar= 5.1          
+mu0 = 5           
+sig = .25           
+n = 30                 
+z = (xbar-mu0)/(sig/sqrt(n)) 
+z
+alpha = .05 
+z.alpha = qnorm(1-alpha) 
+z.alpha
+pnorm(z, lower.tail=FALSE)
+#3-Two-Tailed Test of Population Mean with Known Variance
+xbar= 1.5         
+mu0 = 2          
+sig = .1          
+n = 30                 
+z = (xbar-mu0)/(sig/sqrt(n)) 
+z 
+alpha = .05 
+z.half.alpha = qnorm(1-alpha/2) 
+c(-z.half.alpha, z.half.alpha)
+2*pnorm(z)
+#4-Lower Tail Test of Population Mean with Unknown Variance
+xbar= .9         
+mu0 = 1         
+sig = .1          
+n = 30                 
+t = (xbar-mu0)/(sig/sqrt(n)) 
+t 
+alpha = .05 
+t.alpha = qt(1-alpha, df=n-1) 
+-t.alpha
+pt(t, df=n-1)
+#5-Upper Tail Test of Population Mean with Unknown Variance
+xbar= 3.1         
+mu0 = 3        
+sig = .2          
+n = 30                 
+t = (xbar-mu0)/(sig/sqrt(n)) 
+t 
+alpha = .05 
+t.alpha = qt(1-alpha, df=n-1) 
+t.alpha
+pt(t, df=n-1, lower.tail=FALSE)
+#6-Two-Tailed Test of Population Mean with Unknown Variance
+xbar= 1.9        
+mu0 = 2        
+sig = .1          
+n = 30                 
+t = (xbar-mu0)/(sig/sqrt(n)) 
+t 
+alpha = .05 
+t.half.alpha = qt(1-alpha/2, df=n-1) 
+c(-t.half.alpha, t.half.alpha)
+
+#Maximum-Likelihood Estimation (MLE)
+set.seed(100)
+NO_values <- 100
+Y <- rnorm(NO_values, mean = 5, sd = 1)
+mean(Y)
+sd(Y)
+LogL <- function(mu, sigma) {
+     A = dnorm(Y, mu, sigma)
+      -sum(log(A))
+  }
+
+library(stats4)
+mle(LogL, start = list(mu = 2, sigma=2))
+
+mle(LogL, start = list(mu = 2, sigma=2), method = "L-BFGS-B",
+	lower = c(-Inf, 0),
+       upper = c(Inf, Inf))
+	   
+# Linear Model
+
+Y<-Sampledata$Adj.Close
+X<-Sampledata$Volume
+fit <- lm(Y ~ X)
+summary(fit)
+#Boxplot
+boxplot(Sampledata$Volume, main="Volume", boxwex=0.1)
+#LOF logritham
+library(DMwR)
+Sampledata1<- Sampledata[,2:4]
+outlier.scores <- lofactor(Sampledata1, k=4)
+plot(density(outlier.scores))
+#Standardization
+scale(Sampledata$Volume, center=TRUE, scale=FALSE)
+scale(Sampledata$Volume, center=TRUE, scale=TRUE)
+#Normalization
+normalized = (Sampledata$Volume-+min(Sampledata$Volume))/(max(Sampledata$Volume)-+min(Sampledata$Volume))
+normalized
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+##Chap 4
+##
+## Convert data to time series
+
+
+StockPrice<-c(23.5,23.75,24.1,25.8,27.6,27,27.5,27.75,26,28,27,25.5)
+StockPrice
+StockPricets<- ts(StockPrice,start = c(2016,1),frequency = 12)	
+StockPricets 
+plot(StockPricets)
+install.packages("zoo")
+library(zoo)
+StockData <- read.table("DataChap4.csv",header = TRUE, sep = ",",nrows=3)
+dt = as.Date(StockData$Date, format="%m/%d/%Y")
+Stockdataz = zoo(x=cbind(StockData$Volume,StockData$Adj.Close), order.by=dt) 
+colnames(Stockdataz) <- c("Volume","Adj.Close")
+Stockdataz
+StockData <- read.zoo("DataChap4.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+window(StockData, start=as.Date("2016/11/1"), end=as.Date("2016/11/3"))
+
+StockData <- read.table("DataChap4.csv",header = TRUE, sep = ",",nrows=3)
+zVolume <-zoo(StockData[,2:2],as.Date(as.character(StockData[, 1]), format="%m/%d/%Y"))
+zAdj.Close <-zoo(StockData[,3:3],as.Date(as.character(StockData[, 1]), format="%m/%d/%Y"))
+cbind(zVolume, zAdj.Close)
+plot(StockData$Adj.Close)
+
+StockData <- read.zoo("DataChap4.csv",header = TRUE, sep = ",",format="%m/%d/%Y",nrows=3)
+matrix_xts <- as.xts(StockData,dateFormat='POSIXct')
+matrix_xts
+str(matrix_xts)
+x<-matrix(5:8, ncol =2, nrow =2)
+dt<-as.Date(c("2016-02-02","2016-03-02"))
+xts_object<-xts(x,order.by=dt)
+colnames(xts_object) <- c("a","b")
+xts_object
+
+###Linear Filters
+StockData <- read.zoo("DataChap4.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+PriceData<-ts(StockData$Adj.Close, frequency = 5)
+plot(PriceData,type="l")
+WeeklyMAPrice <- filter(PriceData,filter=rep(1/5,5))
+monthlyMAPrice <- filter(PriceData,filter=rep(1/25,25))
+lines(WeeklyMAPrice,col="red")
+lines(monthlyMAPrice,col="blue")
+###AR
+PriceData<-ts(StockData$Adj.Close, frequency = 5)
+acf(PriceData, lag.max = 10)
+pacf(PriceData, lag.max = 10)
+###MA
+VolumeData<-ts(StockData$Volume, frequency = 5)
+acf(VolumeData, lag.max = 10)
+pacf(VolumeData, lag.max = 10)
+###Arima
+PriceData<-ts(StockData$Adj.Close, frequency = 5)
+plot(PriceData)
+PriceDiff <- diff(PriceData, differences=1)
+plot(PriceDiff)
+acf(PriceDiff, lag.max = 10)
+pacf(PriceDiff, lag.max = 10)
+PriceArima <- arima(PriceData, order=c(0,1,1))
+PriceArima
+library(forecast)
+FutureForecast<-forecast.Arima(PriceArima,h=5)
+FutureForecast
+plot.forecast(FutureForecast)
+Box.test(FutureForecast$residuals, lag=20, type="Ljung-Box")
+###GARCH
+install.packages("rugarch")
+library(rugarch)
+snp <- read.zoo("DataChap4SP500.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+gspec.ru <- ugarchspec(mean.model=list( armaOrder=c(0,0)), distribution="std")
+gfit.ru <- ugarchfit(gspec.ru, snp$Return)
+coef(gfit.ru)
+FutureForecast=ugarchforecast(gfit.ru, n.ahead = 5)
+FutureForecast
+###EGARCH
+snp <- read.zoo("DataChap4SP500.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+egarchsnp.spec = ugarchspec(variance.model=list(model="eGARCH",garchOrder=c(1,1)),
+                        mean.model=list(armaOrder=c(0,0)))
+egarchsnp.fit = ugarchfit(egarchsnp.spec, snp$Return)
+egarchsnp.fit
+coef(egarchsnp.fit)
+FutureForecast=ugarchforecast(egarchsnp.fit, n.ahead = 5)
+FutureForecast
+###VGARCH
+install.packages("rmgarch")
+install.packages("PerformanceAnalytics")
+library(rmgarch)
+library(PerformanceAnalytics)
+snpdji <- read.zoo("DataChap4SPDJIRet.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+
+garch_spec = ugarchspec(mean.model = list(armaOrder = c(2,1)),variance.model = list(garchOrder = c(1,1), model = "sGARCH"), distribution.model = "norm")
+dcc.garch_spec = dccspec(uspec = multispec( replicate(2, garch_spec) ), dccOrder = c(1,1), distribution = "mvnorm")
+dcc_fit= dccfit(dcc.garch_spec,data = snpdji)
+fcst=dccforecast(dcc_fit,n.ahead=5)
+fcst
+####DCC
+snpdji <- read.zoo("DataChap4SPDJIRet.csv",header = TRUE, sep = ",",format="%m/%d/%Y")
+garchspec = ugarchspec(mean.model = list(armaOrder = c(0,0)), 
+                variance.model = list(garchOrder = c(1,1), 
+                model = "sGARCH"), distribution.model = "norm")
+ 
+ dcc.garchsnpdji.spec = dccspec(uspec = multispec( replicate(2, garchspec) ), dccOrder = c(1,1), distribution = "mvnorm")
+
+dcc_fit = dccfit(dcc.garchsnpdji.spec , data = snpdji, fit.control=list(scale=TRUE))
+dcc_fit
+

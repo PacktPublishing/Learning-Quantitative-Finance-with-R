@@ -1,0 +1,147 @@
+#Market Risk
+
+GPSCMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=%5EGSPC&a=00&b=1&c=2010&d=00&e=1&f=2017&g=m'
+GPSCMonthlyData <- read.csv(GPSCMonthlyUrl)
+IBMMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=IBM&a=00&b=1&c=2010&d=00&e=1&f=2017&g=m'
+IBMMonthlyData <- read.csv(IBMMonthlyUrl)
+DateRange <- GPSCMonthlyData$Date == IBMMonthlyData$Date
+GPSCPrice<-GPSCMonthlyData$Close[DateRange]
+IBMPrice<-IBMMonthlyData$Close[DateRange]
+GPSCReturns <- ( GPSCPrice[1:(length(GPSCPrice) - 1)] - GPSCPrice[2:length(GPSCPrice)] ) / GPSCPrice[2:length(GPSCPrice)]
+IBMReturns <- ( IBMPrice[1:(length(IBMPrice) - 1)] - IBMPrice[2:length(IBMPrice)] ) / IBMPrice[2:length(IBMPrice)]
+betafit <- lm(IBMReturns ~ GPSCReturns)
+result <- summary(betafit)
+beta <- result$coefficients[2,1]
+print(beta)
+#####Portfolio risk
+GPSCMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=%5EGSPC&a=00&b=1&c=2015&d=00&e=1&f=2017&g=m'
+GPSCMonthlyData <- read.csv(GPSCMonthlyUrl)
+IBMMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=IBM&a=00&b=1&c=2015&d=00&e=1&f=2017&g=m'
+IBMMonthlyData <- read.csv(IBMMonthlyUrl)
+FBMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=FB&a=00&b=1&c=2015&d=00&e=1&f=2017&g=m'
+FBMonthlyData <- read.csv(FBMonthlyUrl)
+VMonthlyUrl<-'http://ichart.yahoo.com/table.csv?s=V&a=00&b=1&c=2015&d=00&e=1&f=2017&g=m'
+VMonthlyData <- read.csv(VMonthlyUrl)
+
+
+DateRange <- GPSCMonthlyData$Date
+GPSCPrice<-GPSCMonthlyData$Close[DateRange]
+IBMPrice<-IBMMonthlyData$Close[DateRange]
+FBPrice<-FBMonthlyData$Close[DateRange]
+VPrice<-VMonthlyData$Close[DateRange]
+GPSCReturns <- ( GPSCPrice[1:(length(GPSCPrice) - 1)] - GPSCPrice[2:length(GPSCPrice)] ) / GPSCPrice[2:length(GPSCPrice)]
+IBMReturns <- ( IBMPrice[1:(length(IBMPrice) - 1)] - IBMPrice[2:length(IBMPrice)] ) / IBMPrice[2:length(IBMPrice)]
+FBReturns <- ( FBPrice[1:(length(FBPrice) - 1)] - FBPrice[2:length(FBPrice)] ) / FBPrice[2:length(FBPrice)]
+VReturns <- ( VPrice[1:(length(VPrice) - 1)] - VPrice[2:length(VPrice)] ) / VPrice[2:length(VPrice)]
+
+EGPSCReturns<- GPSCReturns-.0015
+EIBMReturns<- IBMReturns-.0015
+EFBReturns<- FBReturns-.0015
+EVReturns<- VReturns-.0015
+
+
+MeanSD<-rbind(cbind("GPSC",mean(EGPSCReturns),sd(EGPSCReturns)),cbind("FB",mean(EFBReturns),sd(EFBReturns)),cbind("IBM",mean(EIBMReturns),sd(EIBMReturns)),cbind("V",mean(EVReturns),sd(EVReturns)))
+MeanSD
+
+lmIBM<- lm(IBMReturns ~ EGPSCReturns)
+summary(lmIBM)
+returns_avg<-matrix(c(-0.0180513406031643,-0.00357192217566396,0.12613583240944),nrow =1)
+covariance<-matrix(c(0.001378118,0.000528808,0.004673302,0.000528808,0.000202913,0.001793228,0.004673302,0.001793228,0.015847524),nrow=3)
+library(tseries)
+sol<-portfolio.optim(x=returns_avg,covmat=covariance, shorts=F)
+sol$pw
+
+###var
+mean = 2
+sigma = 4
+Alpha = .05
+Var_parametric = qnorm(alpha, mean, sigma)
+Var_parametric
+Var_parametric = mean + sigma*qnorm(alpha,0,1)
+Var_parametric
+alpha_z=qnorm(alpha)
+ES_parametric = mean + sigma*(dnorm(alpha_z)/(1-alpha))
+ES_parametric
+
+library(quantmod)
+symbollist = c("FB", "V","JNJ")
+getSymbols(symbollist, from ="2016-01-01", to = "2017-01-01")
+FB = FB[, "FB.Adjusted", drop=F]
+V = V[, "V.Adjusted", drop=F]
+JNJ = JNJ[, "JNJ.Adjusted", drop=F]
+FB_return = CalculateReturns(FB,  method="log")
+V_return = CalculateReturns(V,  method="log")
+JNJ_return = CalculateReturns(JNJ,  method="log")
+FB_return = FB_return[-1,]
+V_return = V_return[-1,]
+JNJ_return = JNJ_return[-1,]
+FB_V_JNJ_return<-cbind(FB_return,V_return,JNJ_return)
+head(FB_V_JNJ_return)
+
+HVAR<-VaR(FB_V_JNJ_return, p=0.95, method="historical")
+HVAR
+
+HCVAR<-ES(FB_V_JNJ_return, p=0.95, method="historical")
+HCVAR
+
+VaR(FB_V_JNJ_return, p=0.95,portfolio_method="component")
+
+VaR(FB_V_JNJ_return, p=0.95,portfolio_method="marginal")
+
+### Monte Carlo Simulation
+Sample_Size<-2000
+set.seed(2345)
+Z<-rnorm(Sample_Size)
+mean<-.20
+sigma<-.25
+deltat<-.08333
+returns<-mean*deltat+sigma*Z*sqrt(deltat)
+hist(returns, breaks = 50)
+Mean_new<-mean(returns)*12
+Mean_new
+std_new<-sd(returns)*(12)^(.5)
+std_new
+VaR(returns, p = 0.95, method="historical")
+
+
+#Credit Risk
+data(GermanCredit)
+LRData<-GermanCredit[,1:10]
+str(LRData)
+summary(LRData)
+set.seed(100)
+library(caTools)
+res = sample.split(LRData$Class, 0.6)
+Train_data = subset(LRData, res == TRUE)
+Test_data=subset(LRData,res==FALSE)
+lgfit = glm(Class ~. , data=Train_data, family="binomial")
+summary(lgfit)
+lgfit = glm(Class ~Duration+InstallmentRatePercentage+Age , data=Train_data, family="binomial")
+summary(lgfit)
+Train_data$predicted.risk = predict(lgfit, newdata=Train_data, type="response")
+table(Train_data$Class, as.numeric(Train_data$predicted.risk >= 0.5))
+
+library(ROCR)
+pred = prediction(Train_data$predicted.risk, Train_data$Class)
+as.numeric(performance(pred, "auc")@y.values)
+predict_Train = predict(lgfit, type="response")
+ROCpred = prediction(predict_Train, Train_data$Class)
+ROCperf = performance(ROCpred, "tpr", "fpr")
+plot(ROCperf)
+
+### Fraud detection
+##
+
+data(GermanCredit)
+FraudData<-GermanCredit[,1:10]
+head(FraudData)
+len<-dim(FraudData)[1]
+train<- sample(1:len , 0.8*len)
+TrainData<-FraudData[train,]
+TestData<-FraudData[-train,]
+fraud_model <- randomForest(Class~.,data=TrainData,ntree=50,proximity=TRUE)
+print(fraud_model)
+plot(fraud_model)
+importance(fraud_model)
+TestPred<-predict(fraud_model,newdata=TestData)
+table(TestPred, TestData$Class)
