@@ -1,12 +1,12 @@
 # Learning Quantitative Finance with R
-This is the code repository for [Learning Quantitative Finance with R](https://www.packtpub.com/big-data-and-business-intelligence/learning-pyspark?utm_source=github&utm_medium=repository&utm_content=9781786463708), published by Packt. It contains all the supporting project files necessary to work through the book from start to finish.
+This is the code repository for [Learning Quantitative Finance with R]https://www.packtpub.com/big-data-and-business-intelligence/learning-quantitative-finance-r?utm_source=github&utm_medium=repository&utm_content=9781786462411), published by Packt. It contains all the supporting project files necessary to work through the book from start to finish.
 
 ## About the book
-Apache Spark is an open source framework for efficient cluster computing with a strong interface for data parallelism and fault tolerance. This book will show you how to leverage the power of Python and put it to use in the Spark ecosystem. You will start by getting a firm understanding of the Spark 2.0 architecture and how to set up a Python environment for Spark.
+The role of a quantitative analyst is very challenging, yet lucrative, so there is a lot of competition for the role in top-tier organizations and investment banks. This book is your go-to resource if you want to equip yourself with the skills required to tackle any real-world problem in quantitative finance using the popular R programming language.
 
-You will get familiar with the modules available in PySpark. You will learn how to abstract data with RDDs and DataFrames and understand the streaming capabilities of PySpark. Also, you will get a thorough overview of machine learning capabilities of PySpark using ML and MLlib, graph processing using GraphFrames, and polyglot persistence using Blaze. Finally, you will learn how to deploy your applications to the cloud using the spark-submit command.
+You'll start by getting an understanding of the basics of R and its relevance in the field of quantitative finance. Once you've built this foundation, we'll dive into the practicalities of building financial models in R. This will help you have a fair understanding of the topics as well as their implementation, as the authors have presented some use cases along with examples that are easy to understand and correlate.
 
-By the end of this book, you will have established a firm understanding of the Spark Python API and how it can be used to build data-intensive applications.
+By the end of this book, you will have a firm grasp of the techniques required to implement basic quantitative finance models in R.
 
 ## Instructions and Navigation
 All of the code is organized into folders. Each folder starts with a number followed by the application name. For example, Chapter 02.
