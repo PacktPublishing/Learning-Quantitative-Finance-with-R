@@ -1,5 +1,5 @@
 # Learning Quantitative Finance with R
-This is the code repository for [Learning Quantitative Finance with R]https://www.packtpub.com/big-data-and-business-intelligence/learning-quantitative-finance-r?utm_source=github&utm_medium=repository&utm_content=9781786462411), published by Packt. It contains all the supporting project files necessary to work through the book from start to finish.
+This is the code repository for [Learning Quantitative Finance with R](https://www.packtpub.com/big-data-and-business-intelligence/learning-quantitative-finance-r?utm_source=github&utm_medium=repository&utm_content=9781786462411), published by Packt. It contains all the supporting project files necessary to work through the book from start to finish.
 
 ## About the book
 The role of a quantitative analyst is very challenging, yet lucrative, so there is a lot of competition for the role in top-tier organizations and investment banks. This book is your go-to resource if you want to equip yourself with the skills required to tackle any real-world problem in quantitative finance using the popular R programming language.
